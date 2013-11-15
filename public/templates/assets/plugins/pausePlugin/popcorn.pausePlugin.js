@@ -18,7 +18,8 @@
         // we need to add this on start as well because we can run into a race condition where 'seeked' is fired before
         // end is fired, or vice versa
         this.on( "seeked", _seekedFunc );
-        this.pause();
+        this.pause(options.start);
+        
         if ( +options.duration > 0 ) {
           _timeout = setTimeout(function() {
             _this.play();

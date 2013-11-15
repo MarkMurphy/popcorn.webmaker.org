@@ -64,6 +64,10 @@
         "type": "sequencer",
         "hidden": true,
         "icon": "{{baseDir}}resources/icons/media.png"
+      },
+      {
+        "type": "pencil",
+        "icon": "{{baseDir}}templates/assets/plugins/pencil/pencil-icon.png"
       }
     ]
   },

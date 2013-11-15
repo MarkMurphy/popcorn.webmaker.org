@@ -270,6 +270,10 @@ app.get( '/templates/assets/editors/image/image-editor.html', routes.path( '/plu
 app.get( '/templates/assets/editors/text/text-editor.html', routes.path( '/plugins/text-editor.html' ) );
 app.get( '/templates/assets/editors/sketchfab/sketchfab-editor.html', routes.path( '/plugins/sketchfab-editor.html' ) );
 
+app.get( '/templates/assets/editors/angle/angle-editor.html', routes.path( '/plugins/angle-editor.html' ) );
+app.get( '/templates/assets/editors/audio/audio-editor.html', routes.path( '/plugins/audio-editor.html' ) );
+app.get( '/templates/assets/editors/pencil/pencil-editor.html', routes.path( '/plugins/pencil-editor.html' ) );
+
 // Localized Strings
 app.get( "/strings/:lang?", middleware.crossOrigin, i18n.stringsRoute( 'en-US' ) );
 

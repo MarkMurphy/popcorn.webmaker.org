@@ -526,7 +526,7 @@ define( [
     // Passthrough to the Popcorn instances pause method
     this.pause = function(){
       if ( _mediaReady && !_popcorn.paused() ) {
-        _popcorn.pause();
+        _popcorn.pause(_popcorn.currentTime());
       }
     };
 

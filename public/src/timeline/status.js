@@ -5,8 +5,7 @@
 define( [ "util/time", "util/keys" ], function( util, Keys ){
 
   function Button( parentNode, className, onClick ) {
-    var _container = parentNode.querySelector( className ),
-        _button = _container.querySelector( ".status-button" ),
+    var _button = parentNode.querySelector( className ),
         _state = true;
 
     function update() {
@@ -120,17 +119,19 @@ define( [ "util/time", "util/keys" ], function( util, Keys ){
         _statusContainer = statusArea.querySelector( ".status-container" ),
         _muteButton,
         _playButton,
+        _stepForwardButton,
+        _stepBackwardButton,
         _time;
 
     _statusContainer.className = "status-container";
 
     _time = new Time( statusArea, _media );
 
-    _muteButton = new Button( statusArea, ".mute-button-container", function() {
+    _muteButton = new Button( statusArea, ".mute-button-container > .status-button", function() {
       _media.muted = !_media.muted;
     });
 
-    _playButton = new Button( statusArea, ".play-button-container", function() {
+    _playButton = new Button( statusArea, ".play-button-container > .status-button", function() {
       if ( _media.ended ) {
         _media.paused = false;
       }
@@ -141,6 +142,14 @@ define( [ "util/time", "util/keys" ], function( util, Keys ){
 
     // Ensure default state is correct
     _playButton.state = true;
+
+    _stepBackwardButton = new Button( statusArea, ".btn-step-backward", function() {
+      _media.seekRelativeFrames(-1);
+    });
+
+    _stepForwardButton = new Button( statusArea, ".btn-step-forward", function() {
+      _media.seekRelativeFrames(+1);
+    });
 
     _media.listen( "mediamuted", function(){
       _muteButton.state = false;

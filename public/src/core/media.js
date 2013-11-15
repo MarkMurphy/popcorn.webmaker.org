@@ -424,6 +424,27 @@
         }
       };
 
+      this.seekRelativeFrames = function (offset) {
+        if (!this.paused) {
+          this.paused = true;
+        }
+
+        var fps           = this.popcornOptions.frameRate || 25 /*DEFAULT_FRAME_RATE*/,
+            currentFrame  = this.currentTime * fps,
+            newTime       = (currentFrame + offset) / fps;
+
+        newTime = newTime + 0.00001; // FIXES A SAFARI SEEK ISSUE. this.currentTime = 0.04 would give SMPTE 00:00:00:00 wheras it should give 00:00:00:01
+
+        this.currentTime = newTime;
+
+        //var seekInfo = "seeking to (fixed): " + newTime;
+        //seekInfo += ", actual: " + currentTime;
+        //seekInfo += ", seek error: " + (newTime - currentTime);
+        //seekInfo += ", frame: " + Math.floor(((newTime % 1)*fps).toFixed(3));
+        
+        //console.log(seekInfo);
+      };
+
       // Internally we decorate URLs with a unique butteruid, strip it when exporting
       function sanitizeUrl() {
         var sanitized;

@@ -158,7 +158,7 @@
 
 .status-container {
   position: absolute;
-  width: @_traySideWidth + 70px;
+  width: @_traySideWidth + 120px;
   height: @_statusContainerHeight;
   line-height: @_statusContainerHeight;
   bottom: @_statusContainerHeight + 25px;
@@ -247,16 +247,8 @@
   position: relative;
   float: left;
   height: 100%;
-  width: @_playButtonHeight + 10px;
-  margin-left: 10px;
-  margin-top: 5px;
 
   .status-button {
-    width: 21px;
-    height: 21px;
-    line-height: 21px;
-    border-radius: 25px;
-
     .icon {
       margin-left: 2px;
     }
@@ -276,6 +268,7 @@
   position: relative;
   float: left;
   margin-top: 10px;
+  margin-left: 10px;
 
   .status-button {
     text-align: left;
@@ -289,4 +282,28 @@
     }
   }
 
+}
+
+.step-button-container {
+  position: relative;
+  float: left;
+  height: 100%;
+
+  .status-button {
+    float: left;
+  }
+}
+
+.play-button-container,
+.step-button-container {
+  .status-button {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 3px;
+    border-color: transparent;
+    box-shadow: none;
+    margin-top: 7px;
+    margin-left: 7px;
+  }
 }

@@ -66,7 +66,7 @@ define( [ "localized", "util/dragndrop", "util/lang", "editor/editor", "l10n!/la
         icon.style.backgroundImage = "url('" + iconImg.src + "')";
       }
 
-      text.innerHTML = Localized.get( pluginName );
+      text.innerHTML = Localized.get( pluginName ) || pluginName;
 
       element.setAttribute( "data-popcorn-plugin-type", e.data.type );
       element.setAttribute( "data-butter-draggable-type", "plugin" );
