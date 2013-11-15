@@ -5,11 +5,12 @@
   "savedDataUrl": "/templates/basic/saved-data.json",
   "editor": {
     "googlemap": "{{baseDir}}templates/assets/editors/googlemap/googlemap-editor.js",
+    "pencil": "{{baseDir}}templates/assets/editors/pencil/pencil-editor.js",
     "popup": "{{baseDir}}templates/assets/editors/popup/popup-editor.js",
     "image": "{{baseDir}}templates/assets/editors/image/image-editor.js",
     "text": "{{baseDir}}templates/assets/editors/text/text-editor.js",
     "sketchfab": "{{baseDir}}templates/assets/editors/sketchfab/sketchfab-editor.js",
-    "pencil": "{{baseDir}}templates/assets/editors/pencil/pencil-editor.js"
+    "wikipedia": "{{baseDir}}templates/assets/editors/wikipedia/wikipedia-editor.js"
   },
   "maxPluginZIndex": 1000
 }

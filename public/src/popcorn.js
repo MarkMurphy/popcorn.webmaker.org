@@ -32,8 +32,9 @@ requirejs.config({
     "popcorn.text": "../templates/assets/plugins/text/popcorn.text",
     "popcorn.wikipedia": "../templates/assets/plugins/wikipedia/popcorn.wikipedia",
     "popcorn.deprecated": "../src/util/deprecated",
-    "popcorn.pencil": "../templates/assets/plugins/pencil/popcorn.pencil",
 
+    // Up My Game Plugins
+    "popcorn.pencil": "../templates/assets/plugins/pencil/popcorn.pencil",
 
     // RequireJS
     "text": "../external/require/text",
@@ -77,6 +78,8 @@ requirejs.config({
     "popcorn.wikipedia": [ "popcorn.core" ],
     "popcorn.sketchfab": [ "popcorn.core", "sketchfab-iframe" ],
     "popcorn.deprecated": [ "popcorn.core" ],
+
+    // Up My Game Plugins
     "popcorn.pencil": [ "popcorn.core" ]
   }
 });

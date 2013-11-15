@@ -212,6 +212,14 @@
         }
       };
 
+      this.getTrackByOrder = function( order ) {
+        for ( var i = 0; i < _orderedTracks.length; i++ ) {
+          if ( order === _orderedTracks[ i ].order ) {
+            return _orderedTracks[ i ];
+          }
+        }
+      };
+
       this.removeTrack = function ( track ) {
         var idx = _tracks.indexOf( track ),
             trackEvent,
@@ -339,6 +347,14 @@
         var trackIndex = _orderedTracks.indexOf( currentTrack );
         if ( trackIndex > -1 && trackIndex < _orderedTracks.length - 1 ) {
           return _orderedTracks[ trackIndex + 1 ];
+        }
+        return null;
+      };
+
+      this.getPreviousTrack = function( currentTrack ) {
+        var trackIndex = _orderedTracks.indexOf( currentTrack );
+        if ( trackIndex > -1 && trackIndex <= _orderedTracks.length - 1 ) {
+          return _orderedTracks[ trackIndex - 1 ];
         }
         return null;
       };
@@ -598,15 +614,14 @@
               popcornOptions: _popcornOptions,
               controls: _popcornWrapper.popcorn ? _popcornWrapper.popcorn.controls() : false,
               tracks: exportJSONTracks,
-              clipData: _clipData
+              clipData: _clipData,
+              currentTime: _currentTime
             };
           },
           set: function( importData ){
             var newTrack,
                 url,
-                i, l,
-                fallbacks = [],
-                sources = [];
+                i, l;
 
             function doImportTracks() {
               if ( importData.tracks ) {
@@ -626,13 +641,8 @@
                     // If sources is a single array and of type null player,
                     // don't bother making a sequence.
                     if ( url.length > 1 || MediaTypes.checkUrl( url[ 0 ] ) !== "null" ) {
-                      // grab first source as main source.
-                      sources.push( URI.makeUnique( url.shift() ).toString() );
-                      for ( i = 0; i < url.length; i++ ) {
-                        fallbacks.push( URI.makeUnique( url[ i ] ).toString() );
-                      }
 
-                      firstSource = sources[ 0 ];
+                      firstSource = URI.makeUnique( url.shift() ).toString();
                       MediaTypes.getMetaData( firstSource, function( data ) {
 
                         newTrack = new Track();
@@ -642,9 +652,8 @@
                           popcornOptions: {
                             start: 0,
                             end: _duration,
-                            source: sources,
+                            source: [ firstSource ],
                             title: data.title,
-                            fallback: fallbacks,
                             duration: _duration,
                             target: "video-container"
                           }

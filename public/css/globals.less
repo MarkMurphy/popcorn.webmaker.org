@@ -11,6 +11,7 @@
 @TRAY_Z_INDEX: @BASE_Z_INDEX + 1;
 @EDITOR_Z_INDEX: @BASE_Z_INDEX + 1;
 @MODAL_Z_INDEX: @BASE_Z_INDEX + 100;
+@TOGETHERJS_Z_INDEX: @BASE_Z_INDEX + 99;
 
 // EDITOR
 @EDITOR_WIDTH: 350px;
@@ -196,7 +197,6 @@
 
 
 // FONT AWESOME
-@import "../external/font-awesome/font-awesome";
 .font-awesome {
   font-family: FontAwesome;
   font-weight: normal;
@@ -205,22 +205,6 @@
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
 }
-
-
-// *********************************************************
-// MEDIA QUERIES
-//
-// Usage:
-// .wrapper {
-//   @media @medium {
-//     font-size: 16px;
-//   }
-//  .butter-header-spacing & {
-//    @media @medium-in-editor {
-//      font-size: 16px;
-//    }
-//  }
-// }
 
 // These are the widths chosen for each supported size.
 @small-w: 560;

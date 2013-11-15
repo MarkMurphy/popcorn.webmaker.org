@@ -31,7 +31,7 @@
           <ul class="butter-btn-menu">
             <li><a href="/{{localeInfo.lang}}/" target="_blank"> <span class="icon icon-file-alt"></span> {{ gettext("New") }}</a></li>
             <li><a class="butter-clear-events-btn" target="_blank"> <span class="icon icon-remove"></span> {{ gettext("Clear Events") }}</a></li>
-            <li><a class="butter-remove-project-btn" target="_blank"> <span class="icon icon-remove"></span> {{ gettext("Delete Project") }}</a></li>
+            <li><a class="butter-remove-project-btn" target="_blank"> <span class="icon icon-trash"></span> {{ gettext("Delete Project") }}</a></li>
           </ul>
         </div>
 
@@ -42,6 +42,9 @@
           <ul class="menu-container">
             <li class="my-makes"><span class="icon icon-th-large"></span> <button>{{ gettext("My makes") }}</button></li>
             <li class="login"><span class="icon icon-signout"></span><iframe src="{{audience}}/{{localeInfo.lang}}/sso/include.html" class="include-frame"></iframe>
+            {% if togetherjsEnabled %}
+              <li><span class="icon icon-comments-alt"></span><button class="together-toggle">{{ gettext("Collaborate") }}</button></li>
+            {% endif %}
             </li>
           </ul>
         </div>

@@ -185,6 +185,11 @@
 
       options.attemptJWPlayer = function() {
         options._clip.off( "error", options.attemptJWPlayer );
+        if ( !options._clip.error ) {
+          // For some reason html5 media clips are throwing error events,
+          // with no actual error, only in the embed...
+          return;
+        }
         var jwDiv = document.createElement( "div" );
         // Remove the dead html5 video element.
         options._container.removeChild( document.getElementById( options._clip.media.id ) );
@@ -335,12 +340,6 @@
       options.setupContainer();
       if ( options.source ) {
         options.sourceToArray( options, "source" );
-        if ( options.fallback ) {
-          options.sourceToArray( options, "fallback" );
-        }
-        if ( options.fallback ) {
-          options.source = options.source.concat( options.fallback );
-        }
         loadingHandler.add( options, options.addSource );
       }
 
@@ -428,23 +427,13 @@
         options.hidden = updates.hidden;
         options.setZIndex();
       }
-      if ( updates.fallback ) {
-        options.sourceToArray( updates, "fallback" );
-        options.fallback = updates.fallback;
-      }
       if ( updates.source ) {
         options.sourceToArray( updates, "source" );
-        if ( options.fallback ) {
-          updates.source = updates.source.concat( options.fallback );
-        }
         if ( updates.source.toString() !== options.source.toString() ) {
           options.ready = false;
           options.playWhenReady = false;
           if ( options.active ) {
             options.displayLoading();
-          }
-          if ( updates.fallback ) {
-            updates.source = updates.source.concat( updates.fallback );
           }
           options.source = updates.source;
           options.clearEvents();
@@ -460,10 +449,6 @@
           }
           loadingHandler.add( options, options.addSource );
         }
-      }
-      if ( updates.hasOwnProperty( "mute" ) ) {
-        options.mute = updates.mute;
-        options._volumeEvent();
       }
       if ( updates.hasOwnProperty( "top" ) ) {
         options.top = updates.top;
@@ -482,6 +467,10 @@
         options._container.style.width = ( options.width || "100" ) + "%";
       }
       if ( options.ready ) {
+        if ( updates.hasOwnProperty( "mute" ) ) {
+          options.mute = updates.mute;
+          options._volumeEvent();
+        }
         if ( updates.hasOwnProperty( "volume" ) ) {
           options.volume = updates.volume;
           options._volumeEvent();
@@ -550,12 +539,6 @@
           elem: "input",
           type: "url",
           label: "Source URL",
-          "default": ""
-        },
-        fallback: {
-          elem: "input",
-          type: "url",
-          label: "Fallback URL (only applies to exported projects)",
           "default": ""
         },
         title: {

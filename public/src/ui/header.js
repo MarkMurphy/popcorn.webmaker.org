@@ -1,5 +1,7 @@
-define([ "WebmakerUI", "localized", "dialog/dialog", "util/lang", "l10n!/layouts/header.html", "ui/widget/textbox", "ui/widget/tooltip", "ui/widget/ProjectDetails" ],
-  function( WebmakerUI, Localized, Dialog, Lang, HEADER_TEMPLATE, TextBoxWrapper, ToolTip, ProjectDetails ) {
+/*globals TogetherJS*/
+define([ "WebmakerUI", "localized", "dialog/dialog", "util/lang", "l10n!/layouts/header.html", "ui/widget/textbox", "ui/widget/tooltip",
+         "ui/widget/ProjectDetails", "util/togetherjs-syncer" ],
+  function( WebmakerUI, Localized, Dialog, Lang, HEADER_TEMPLATE, TextBoxWrapper, ToolTip, ProjectDetails, TogetherJSSyncer ) {
 
   return function( butter, options ){
 
@@ -9,22 +11,21 @@ define([ "WebmakerUI", "localized", "dialog/dialog", "util/lang", "l10n!/layouts
 
     var _this = this,
         _rootElement = Lang.domFragment( HEADER_TEMPLATE, ".butter-header" ),
-        _bodyWrapper = document.querySelector( ".body-wrapper" ),
         _saveButton = _rootElement.querySelector( ".butter-save-btn" ),
         _projectTitle = _rootElement.querySelector( ".butter-project-title" ),
         _projectName = _projectTitle.querySelector( ".butter-project-name" ),
         _clearEvents = _rootElement.querySelector( ".butter-clear-events-btn" ),
         _removeProject = _rootElement.querySelector( ".butter-remove-project-btn" ),
         _previewBtn = _rootElement.querySelector( ".butter-preview-btn" ),
-        _projectMenu = _rootElement.querySelector( ".butter-project-menu" ),
-        _projectMenuControl = _rootElement.querySelector( ".butter-project-menu-control" ),
-        _projectMenuList = _projectMenu.querySelector( ".butter-btn-menu" ),
         _noProjectNameToolTip,
         _makeDetails = _rootElement.querySelector( "#make-details" ),
         _projectTitlePlaceHolderText = _projectName.innerHTML,
         _toolTip, _loginTooltip,
         _projectDetails = new ProjectDetails( butter ),
-        _langSelector = _rootElement.querySelector( "#lang-picker" );
+        _togetherJS,
+        _langSelector = _rootElement.querySelector( "#lang-picker" ),
+        _togetherjsBtn = _rootElement.querySelector( ".together-toggle" ),
+        _togetherJSSyncer;
 
     // URL redirector for language picker
     WebmakerUI.langPicker( _langSelector );
@@ -50,6 +51,30 @@ define([ "WebmakerUI", "localized", "dialog/dialog", "util/lang", "l10n!/layouts
     _this.element = _rootElement;
 
     ToolTip.apply( _projectTitle );
+
+    // Feature flag might not be enabled.
+    if ( _togetherjsBtn ) {
+      _togetherJSSyncer = new TogetherJSSyncer( butter );
+
+      var toggleTogether = function( started ) {
+        return function() {
+          _togetherjsBtn.innerHTML = started ? Localized.get( "Go it alone" ) : Localized.get( "Collaborate" );
+        };
+      };
+
+      TogetherJS.config( "disableWebRTC", true );
+
+      TogetherJS.on( "ready", toggleTogether( true ) );
+      TogetherJS.on( "close", toggleTogether( false ) );
+
+      _togetherjsBtn.addEventListener( "click", function() {
+        _togetherJS = new TogetherJS( this );
+      });
+
+      if ( TogetherJS.running ) {
+        toggleTogether( true )();
+      }
+    }
 
     function showErrorDialog( message ) {
       var dialog = Dialog.spawn( "error-message", {
@@ -317,26 +342,23 @@ define([ "WebmakerUI", "localized", "dialog/dialog", "util/lang", "l10n!/layouts
           container = document.querySelector( ".my-projects-container" ),
           iframe = document.querySelector( ".my-projects-iframe" );
 
-     function close() {
-        document.removeEventListener( "mousedown", close, false );
+      function close() {
+        document.removeEventListener( "click", close, false );
         myProjectsButton.addEventListener( "click", open, false );
-        myProjectsButton.removeEventListener( "click", close, false );
 
         container.classList.remove( "open" );
         iframe.style.height = "";
       }
 
-      function open() {
-        myProjectsButton.addEventListener( "click", close, false );
+      function open( e ) {
+        // Prevent this click event from firing close.
+        e.stopPropagation();
         myProjectsButton.removeEventListener( "click", open, false );
 
         container.classList.add( "open" );
         iframe.style.height = "300px";
         iframe.src = "/dashboard/" + Localized.getCurrentLang();
-        // WARNING: this works because we don't use mousedown in other events,
-        //          but only click events, which trigger after mousedown. If we
-        //          do add more mousedown events, this may introduce timing issues.
-        document.addEventListener( "mousedown", close, false );
+        document.addEventListener( "click", close, false );
       }
 
       myProjectsButton.addEventListener( "click", open, false );

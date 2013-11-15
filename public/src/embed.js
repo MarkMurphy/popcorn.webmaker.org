@@ -161,8 +161,8 @@ function init() {
       width = shareSize[ 0 ],
       height = shareSize[ 1 ];
 
-    return '<iframe src="' + src + '" width="' + width + '" height="' + height +
-           '" frameborder="0" mozallowfullscreen webkitallowfullscreen allowfullscreen></iframe>';
+    return "<iframe src='" + src + "' width='" + width + "' height='" + height +
+           "' frameborder='0' mozallowfullscreen webkitallowfullscreen allowfullscreen></iframe>";
   }
 
   // We put the embed's cannoncial URL in a <link rel="cannoncial" href="...">
@@ -355,12 +355,14 @@ function init() {
       "util/lang",
       "ui/widget/controls",
       "ui/widget/textbox",
+      "ui/resizeHandler",
       "util/mediatypes",
       "text!layouts/attribution.html",
       "util/accepted-ua",
       "popcorn"
     ],
-    function( URI, LangUtil, Controls, TextboxWrapper, MediaUtil, DEFAULT_LAYOUT_SNIPPETS ) {
+    function( URI, LangUtil, Controls, TextboxWrapper, resizeHandler, MediaUtil, DEFAULT_LAYOUT_SNIPPETS ) {
+
       var __defaultLayouts = LangUtil.domFragment( DEFAULT_LAYOUT_SNIPPETS );
       /**
        * Expose Butter so we can get version info out of the iframe doc's embed.
@@ -416,6 +418,9 @@ function init() {
         branding: qs.branding === "0" ? false : true,
         showinfo: qs.showinfo === "0" ? false : true
       };
+
+      resizeHandler();
+      window.addEventListener( "resize", resizeHandler, false );
 
       Controls.create( "controls", {
         onShareClick: function() {
@@ -515,6 +520,7 @@ function init() {
             var imagesContainer = __defaultLayouts.querySelector( ".attribution-images" ).cloneNode( true ),
                 imgCont,
                 img,
+                imgPrefix = "/resources/icons/",
                 foundMatch = false;
 
             for ( var k = 0; k < imageEvents.length; k++ ) {
@@ -523,7 +529,9 @@ function init() {
 
               var href = img.photosetId || img.src || "http://www.flickr.com/search/?m=tags&q=" + img.tags,
                   text = img.src || img.photosetId || img.tags,
-                  icon = imgCont.querySelector( "img" );
+                  icon = document.createElement( "img" );
+
+              icon.classList.add( "media-icon" );
 
               imgCont.querySelector( "a" ).href = href;
               imgCont.querySelector( "a" ).innerHTML = text;
@@ -537,11 +545,13 @@ function init() {
 
               if ( img.tags || img.photosetId || MediaUtil.checkUrl( img.src ) === "Flickr" ) {
                 foundMatch = true;
-                icon.src += "flickr-black.png";
+                icon.src += imgPrefix + "flickr-black.png";
+                imgCont.insertBefore( icon, imgCont.firstChild );
                 imagesContainer.appendChild( imgCont );
               } else if ( img.src.indexOf( "giphy" ) !== -1 ) {
                 foundMatch = true;
-                icon.src += "giphy.png";
+                icon.src += imgPrefix + "giphy.png";
+                imgCont.insertBefore( icon, imgCont.firstChild );
                 imagesContainer.appendChild( imgCont );
               } else {
                 imgCont = null;

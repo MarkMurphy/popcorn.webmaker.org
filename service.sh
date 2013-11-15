@@ -1,15 +1,18 @@
 #!/bin/sh
 
+cmd="start"
 dir="~/Documents"
 screenflag="no"
 
 while [ $# -gt 0 ]
 do
   case "$1" in
-    -s | --screen) screenflag="yes";;
-    -d | --dir) dir="$2"; shift;;
-    --) shift; break;;
-    -*) echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
+    "start")  cmd="start";;
+    "stop")   cmd="stop";;
+    -s)       screenflag="yes";;
+    -d)       dir="$2"; shift;;
+    --)       shift; break;;
+    -*)       echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
   esac
   shift
 done
@@ -21,7 +24,6 @@ function start {
   if [ $screenflag == "yes" ]; then
     screen -dmS $title && screen -S $title -X screen $cmd
   else
-    exit 0;
     osascript \
     -e "tell application \"Terminal\" to activate" \
     -e "tell application \"System Events\" to keystroke \"t\" using {command down}" \
@@ -38,9 +40,9 @@ function stop {
   fi
 }
 
-case "$1" in
+case $cmd in
   "stop")
-    echo "Stopping..." 
+    printf "Stopping..."
     stop "MongoDB"
     stop "ElasticSearch"
     stop "WebmakerLoginAPI"
@@ -51,7 +53,7 @@ case "$1" in
     ;;
 
   "start" | *)
-    echo "Starting..."
+    printf "Starting..."
     start "MongoDB"           "mongod"
     start "ElasticSearch"     "elasticsearch -f"
     start "WebmakerLoginAPI"  "cd ${dir}/login.webmaker.org && foreman start -f Procfile"

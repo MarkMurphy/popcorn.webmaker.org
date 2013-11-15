@@ -371,7 +371,6 @@
     list-style: none;
     > li {
       color: lighten( #4d4e53, 30% );
-      padding: 0 1em;
       background: #FFF;
       border-bottom: 1px solid @midgrey;
       padding: 10px;
@@ -385,4 +384,28 @@
       }
     }
   }
+}
+
+/***************************************************
+* TogetherJS restyling.
+*/
+
+div#togetherjs-dock.togetherjs-dock-right {
+  position:fixed;
+  top: @HEADER_SPACING + 50;
+  right: @EDITOR_WIDTH + 5;
+  z-index: @TOGETHERJS_Z_INDEX;
+  .transition( right 0.35s );
+
+  &.minimized {
+    right: 5px;
+  }
+}
+
+div.togetherjs-arrow, div.togetherjs-cursor, div.togetherjs-click {
+  z-index: @TOGETHERJS_Z_INDEX
+}
+
+#togetherjs-menu.togetherjs-menu, #togetherjs-pick-color.togetherjs-menu {
+  z-index: @TOGETHERJS_Z_INDEX + 1;
 }
