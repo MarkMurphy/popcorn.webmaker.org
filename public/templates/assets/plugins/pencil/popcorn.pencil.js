@@ -11,20 +11,19 @@
       return;
     }
 
-    var container, svg, path, viewBox,
+    var container, svg, path,
         target = Popcorn.dom.find( options.target ),
         self = this;
 
     return {
       _setup: function( options ) {
-        console.log("pencil setup");
-
         if ( !target ) {
           target = self.media.parentNode;
         }
 
         container = document.createElement( "div" );
         container.style.position = "absolute";
+        container.style.overflow = "hidden";
         container.style.top = options.top + "%";
         container.style.left = options.left + "%";
         container.style.width = options.width + "%";
@@ -43,21 +42,20 @@
         svg.style.overflow = "hidden";
         svg.style.width = 100 + "%";
         svg.style.height = 100 + "%";
-
-        // Set SVG viewBox Defaults
+        
+        // Set the viewBox once, only on cretation.
         options.viewBoxMinX = options.viewBoxMinX || 0;
         options.viewBoxMinY = options.viewBoxMinY || 0;
         options.viewBoxWidth = options.viewBoxWidth || target.offsetWidth;
         options.viewBoxHeight = options.viewBoxHeight || target.offsetHeight;
 
-        viewBox = [
+        svg.setAttribute("viewBox", [
           options.viewBoxMinX,
           options.viewBoxMinY,
           options.viewBoxWidth,
           options.viewBoxHeight
-        ];
+        ].join(" "));
 
-        svg.setAttribute("viewBox", viewBox.join(" "));
         svg.setAttribute("preserveAspectRatio", "xMinYMin");
 
         // Path
@@ -72,8 +70,8 @@
         }
 
         // Add transition
-        container.classList.add( options.transition );
-        container.classList.add( "off" );
+        svg.classList.add( options.transition );
+        svg.classList.add( "off" );
 
         svg.appendChild( path );
         container.appendChild( svg );
@@ -95,19 +93,19 @@
        * options variable
        */
       start: function( event, options ) {
-        var container = options._container,
+        var svg = options._svg,
             redrawBug;
 
         this.pause(options.start);
 
-        if ( container ) {
-          container.classList.add( "on" );
-          container.classList.remove( "off" );
+        if ( svg ) {
+          svg.classList.add( "on" );
+          svg.classList.remove( "off" );
 
           // Safari Redraw hack - #3066
-          container.style.display = "none";
-          redrawBug = container.offsetHeight;
-          container.style.display = "";
+          svg.style.display = "none";
+          redrawBug = svg.offsetHeight;
+          svg.style.display = "";
         }
       },
 
@@ -117,17 +115,17 @@
        * options variable
        */
       end: function( event, options ) {
-        if ( options._container ) {
-          options._container.classList.add( "off" );
-          options._container.classList.remove( "on" );
+        if ( options._svg ) {
+          options._svg.classList.add( "off" );
+          options._svg.classList.remove( "on" );
         }
       },
 
       _update: function ( trackEvent, options ) {
         var svg = trackEvent._svg,
-            container = trackEvent._container;
-
-        console.log("update pencil", options, trackEvent);
+            path = trackEvent._path,
+            container = trackEvent._container,
+            updateViewBox = false;
         
         if ( ( options.left || options.left === 0 ) && options.left !== trackEvent.left ) {
           trackEvent.left = options.left;
@@ -150,11 +148,49 @@
         }
 
         if ( options.transition && options.transition !== trackEvent.transition ) {
-          container.classList.remove( trackEvent.transition );
+          svg.classList.remove( trackEvent.transition );
           trackEvent.transition = options.transition;
-          container.classList.add( trackEvent.transition );
+          svg.classList.add( trackEvent.transition );
         }
-        
+
+        if ( (options.viewBoxWidth || options.viewBoxWidth === 0) && options.viewBoxWidth !== trackEvent.viewBoxWidth ) {
+          trackEvent.viewBoxWidth = options.viewBoxWidth;
+          updateViewBox = true;
+        }
+
+        if ( (options.viewBoxHeight || options.viewBoxHeight === 0) && options.viewBoxHeight !== trackEvent.viewBoxHeight ) {
+          trackEvent.viewBoxHeight = options.viewBoxHeight;
+          updateViewBox = true;
+        }
+
+        if ( (options.viewBoxMinX || options.viewBoxMinX === 0) && options.viewBoxMinX !== trackEvent.viewBoxMinX ) {
+          trackEvent.viewBoxMinX = options.viewBoxMinX;
+          updateViewBox = true;
+        }
+
+        if ( (options.viewBoxMinY || options.viewBoxMinY === 0) && options.viewBoxMinY !== trackEvent.viewBoxMinY ) {
+          trackEvent.viewBoxMinY = options.viewBoxMinY;
+          updateViewBox = true;
+        }
+
+        if ( updateViewBox ) {
+          svg.setAttribute("viewBox", [trackEvent.viewBoxMinX, trackEvent.viewBoxMinY, trackEvent.viewBoxWidth, trackEvent.viewBoxHeight].join(" "));
+        }
+
+        if ( options.path && options.path !== trackEvent.path ) {
+          trackEvent.path = options.path;
+          path.setAttribute("d", trackEvent.path);
+        }
+
+        if ( options.strokeWidth && options.strokeWidth !== trackEvent.strokeWidth ) {
+          trackEvent.strokeWidth = options.strokeWidth;
+          path.style.strokeWidth = options.strokeWidth + "px";
+        }
+
+        if ( options.strokeColor && options.strokeColor !== trackEvent.strokeColor ) {
+          trackEvent.strokeColor = options.strokeColor;
+          path.style.stroke = options.strokeColor;
+        }
       },
 
       _teardown: function( options ) {
@@ -246,25 +282,29 @@
       viewBoxWidth: {
         elem: "input",
         type: "number",
-        label: "View Box Width",
+        units: "px",
+        "default": 0,
         hidden: true
       },
       viewBoxHeight: {
         elem: "input",
         type: "number",
-        label: "View Box Height",
+        units: "px",
+        "default": 0,
         hidden: true
       },
       viewBoxMinX: {
         elem: "input",
         type: "number",
-        label: "View Box Min-X",
+        units: "px",
+        "default": 0,
         hidden: true
       },
       viewBoxMinY: {
         elem: "input",
         type: "number",
-        label: "View Box Min-Y",
+        units: "px",
+        "default": 0,
         hidden: true
       },
       zindex: {

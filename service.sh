@@ -1,14 +1,14 @@
 #!/bin/sh
 
-cmd="start"
+op="start"
 dir="~/Documents"
 screenflag="no"
 
 while [ $# -gt 0 ]
 do
   case "$1" in
-    "start")  cmd="start";;
-    "stop")   cmd="stop";;
+    "start")  op="start";;
+    "stop")   op="stop";;
     -s)       screenflag="yes";;
     -d)       dir="$2"; shift;;
     --)       shift; break;;
@@ -31,7 +31,7 @@ function start {
     -e "tell application \"Terminal\" to do script \"$cmd\" in selected tab of the front window" >/dev/null
   fi 
 
-  sleep 1
+  sleep 1;
 }
 
 function stop {
@@ -40,7 +40,7 @@ function stop {
   fi
 }
 
-case $cmd in
+case $op in
   "stop")
     printf "Stopping..."
     stop "MongoDB"
